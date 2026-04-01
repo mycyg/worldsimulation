@@ -31,4 +31,11 @@ backend.log
 # OS
 .DS_Store
 Thumbs.db
+# Screenshots in root are NOT committed (except README ones)
+# screenshot-sim*.png and screenshot-sim2.png etc.
+# graph_*.png and other misc screenshots
 *.png
+!screenshot-sim*.png
+!screenshot-sim2.png
+!screenshot-sim3.png
+frontend/src/**/*.png
