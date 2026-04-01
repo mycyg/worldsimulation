@@ -6,16 +6,6 @@ WorldSim 是一个基于 LLM 的多智能体世界推演系统。用户设定一
 
 思路参考了 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 的角色卡系统（persona / appearance / speech_style）和 [MiroFish](https://github.com/mycyg/MiroFish) 的多智能体博弈推演机制。
 
-## Screenshots
-
-**推演主界面** — 左侧时间线，中间实时局势播演，右侧实体压力/影响力面板，底部可折叠知识图谱：
-
-![simulation](https://github.com/mycyg/worldsimulation/raw/main/screenshot-sim.png)
-
-**场景设置** — 可配置初始指标、时间参数、结局条件、大事件触发规则：
-
-![setup](https://github.com/mycyg/worldsimulation/raw/main/screenshot-sim2.png)
-
 ## 核心特性
 
 - **Tick-based 事件驱动模拟** — 每个 tick = 1 个月，- **通用实体命名** — 实体使用真实社会角色描述，而非虚构人名
@@ -57,7 +47,6 @@ WorldSim/
 │   │   ├── report_generator.py        # 推演报告生成器
 │   │   ├── graphiti_service.py        # Kuzu 知识图谱服务
 │   │   ├── file_parser.py             # PDF/TXT/MD 文件解析
-│   │   └── zep_service.py             # Zep 长期记忆服务（可选）
 │   └── test_smoke.py                  # 冒烟测试
 ├── frontend/
 │   ├── index.html
