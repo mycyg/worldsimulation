@@ -1,2 +1,6 @@
-# worldsimulation
-LLM Driven World simulate
+# WorldSim - 多智能体世界推演引擎
+
+> **Warning: This is a toy project.** 一个为了好玩和学习而做的实验性项目，不适用于任何严肃的场景分析或决策参考。
+
+WorldSim 是一个基于 LLM 的多智能体世界推演系统。用户设定一个世界背景（如"AI 替代 85% 白领工作"），系统自动生成数十个社会实体（政府机构、企业、工会、个人等），并在 tick-based 时间轴上模拟它们之间的博弈、反应和演变。
+
