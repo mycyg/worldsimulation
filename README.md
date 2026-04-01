@@ -4,93 +4,93 @@
 
 WorldSim 是一个基于 LLM 的多智能体世界推演系统。用户设定一个世界背景（如"AI 替代 85% 白领工作"），系统自动生成数十个社会实体（政府机构、企业、工会、个人等），并在 tick-based 时间轴上模拟它们之间的博弈、反应和演变。
 
- 思路参考了 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 的角色卡系统（persona / appearance / speech_style）和 [MiroFish](https://github.com/mycyg/MiroFish) 的多智能体博弈推演机制.
-
-## 戸住
+思路参考了 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 的角色卡系统（persona / appearance / speech_style）和 [MiroFish](https://github.com/mycyg/MiroFish) 的多智能体博弈推演机制。
 
 ## Screenshots
 
-![image](https://github.com/mycyg/worldsimulation/raw/main/screenshot-sim.png)
+**推演主界面** — 左侧时间线，中间实时局势播演，右侧实体压力/影响力面板，底部可折叠知识图谱：
 
-推演主界面：左侧为时间线面板，中间为聊天式实时局势播演区右侧为实体压力/影响力面板，以及底部可折叠的知识图谱. ## 栯住
+![simulation](https://github.com/mycyg/worldsimulation/raw/main/screenshot-sim.png)
 
-![image](https://github.com/mycyg/worldsimulation/raw/main/screenshot-sim2.png)
-场景设置页面：可配置初始指标、时间参数、结局条件、大事件触发规则等.
+**场景设置** — 可配置初始指标、时间参数、结局条件、大事件触发规则：
+
+![setup](https://github.com/mycyg/worldsimulation/raw/main/screenshot-sim2.png)
 
 ## 核心特性
 
 - **Tick-based 事件驱动模拟** — 每个 tick = 1 个月，实体在精确时间戳上自主行动
 - **通用实体命名** — 实体使用真实的社会角色描述（如"国家应急就业管理部门"、"38岁失业财务总监"），而非虚构人名
-- **自主决策 + 因果链** — 高影响力实体先行行动，其余实体看到结果后反应；低影响力高压实体可触发极端事件并并提升自身影响力
+- **自主决策 + 因果链** — 高影响力实体先行行动，其余实体看到结果后反应；低影响力高压实体可触发极端事件
 - **混合大事件触发** — 用户自定义规则 + LLM 自主判断，双层触发机制
 - **可配置参数** — 初始指标、结局阈值、大事件触发规则均可自定义
 - **实时 WebSocket 推送** — 推演过程中页面实时更新，无需手动刷新
 - **知识图谱集成** — 基于 Kuzu 图数据库的实体关系可视化
 - **多结局判定** — Good End / Bad End / Bittersweet / Neutral，根据指标动态判定
- ## 技术栈
 
- | 层 | 技术 | 说明 |
-|---|------|------|
-| Frontend | Vue 3 + Vue Router + Vite | SPA 弡 路由 | Backend | Flask + Flask-SocketIO + SQLAlchemy | ORM |
+## 技术栈
+
+| 层 | 技术 |
+|------|------|
+| Frontend | Vue 3 + Vue Router + Vite |
+| Backend | Flask + Flask-SocketIO + SQLAlchemy |
 | LLM | 火山引擎 Ark API（兼容 OpenAI 接口格式） |
 | Database | SQLite（关系数据） + Kuzu（图数据库） |
-| Memory | Zep（可选，长期记忆管理） |
 
 ## 项目结构
 
- ```
+```
 WorldSim/
 ├── backend/
-│   ├── app.py                    # Flask 应用入口 + SocketIO 配置
-│   ├── config.py               # 环境变量 + 配置管理
-│   ├── requirements.txt        # Python 依赖
+│   ├── app.py                         # Flask 应用入口 + SocketIO 配置
+│   ├── config.py                      # 环境变量 + 配置管理
+│   ├── requirements.txt               # Python 依赖
 │   ├── models/
-│   │   ├── database.py         # SQLAlchemy 数据模型 + 自动迁移
+│   │   └── database.py                # SQLAlchemy 数据模型 + 自动迁移
 │   ├── routes/
-│   │   ├── scenario.py         # 场景 CRUD + 文件上传
-│   │   ├── entity.py           # 实体管理 + LLM 批量生成
-│   │   ├── simulation.py       # 推演控制 + SocketIO 实时推送
-│   │   └── report.py           # 结局报告生成
+│   │   ├── scenario.py                # 场景 CRUD + 文件上传
+│   │   ├── entity.py                  # 实体管理 + LLM 批量生成
+│   │   ├── simulation.py              # 推演控制 + SocketIO 实时推送
+│   │   └── report.py                  # 结局报告生成
 │   ├── services/
-│   │   ├── simulation_engine.py    # 核心：tick-based 推演循环引擎
-│   │   ├── entity_generator.py     # LLM 驱动的多阵营实体生成器
-│   │   ├── ending_system.py        # 可配置结局判定系统
-│   │   ├── llm_client.py           # OpenAI 兼容 LLM 客户端
-│   │   ├── report_generator.py     # 推演报告生成器
-│   │   ├── graphiti_service.py     # Kuzu 知识图谱服务
-│   │   ├── file_parser.py          # PDF/TXT/MD 文件解析
-│   │   └── zep_service.py          # Zep 长期记忆服务
-│   └── test_smoke.py             # 冒烟测试
+│   │   ├── simulation_engine.py       # 核心：tick-based 推演循环引擎
+│   │   ├── entity_generator.py        # LLM 驱动的多阵营实体生成器
+│   │   ├── ending_system.py           # 可配置结局判定系统
+│   │   ├── llm_client.py              # OpenAI 兼容 LLM 客户端
+│   │   ├── report_generator.py        # 推演报告生成器
+│   │   ├── graphiti_service.py        # Kuzu 知识图谱服务
+│   │   ├── file_parser.py             # PDF/TXT/MD 文件解析
+│   │   └── zep_service.py             # Zep 长期记忆服务
+│   └── test_smoke.py                  # 冒烟测试
 ├── frontend/
 │   ├── index.html
 │   ├── package.json
 │   ├── vite.config.js
 │   └── src/
-│       ├── main.js                # Vue 入口
-│       ├── App.vue               # 根组件
-│       ├── api.js                # API 客户端（axios）
+│       ├── main.js                   # Vue 入口
+│       ├── App.vue                    # 根组件
+│       ├── api.js                     # API 客户端（axios）
 │       ├── router/
-│       │   └── index.js           # Vue Router 路由配置
+│       │   └── index.js               # Vue Router 路由配置
 │       ├── views/
-│       │   ├── Home.vue          # 首页 - 埥看历史推演
-│       │   ├── Setup.vue          # 场景设置（含高级配置面板）
-│       │   ├── Entities.vue      # 实体管理（LLM 生成 / 手动编辑）
-│       │   ├── Simulation.vue     # 推演主界面（实时 WebSocket）
-│       │   └── Report.vue          # 结局报告查看
+│       │   ├── Home.vue               # 首页 - 查看历史推演
+│       │   ├── Setup.vue              # 场景设置（含高级配置面板）
+│       │   ├── Entities.vue           # 实体管理（LLM 生成 / 手动编辑）
+│       │   ├── Simulation.vue          # 推演主界面（实时 WebSocket）
+│       │   └── Report.vue             # 结局报告查看
 │       ├── components/
-│       │   ├── MetricsBar.vue     # 四大指标条（黑暗/压力/稳定/希望）
-│       │   ├── Timeline.vue       # 左侧时间线面板
-│       │   ├── SimControls.vue    # 右侧推演控制面板
-│       │   ├── GraphPanel.vue     # 底部知识图谱面板
-│       │   ├── FactionList.vue    # 阵营列表组件
-│       │   ├── EntityEditor.vue   # 实体编辑抽屉
-│       │   ├── FileUpload.vue     # 文件上传组件
-│       │   ├── ToastContainer.vue # 全局通知容器
-│       │   └── Toast.js            # 通知工具函数
+│       │   ├── MetricsBar.vue          # 四大指标条
+│       │   ├── Timeline.vue            # 左侧时间线面板
+│       │   ├── SimControls.vue         # 右侧推演控制面板
+│       │   ├── GraphPanel.vue          # 底部知识图谱面板
+│       │   ├── FactionList.vue         # 阵营列表组件
+│       │   ├── EntityEditor.vue        # 实体编辑抽屉
+│       │   ├── FileUpload.vue          # 文件上传组件
+│       │   ├── ToastContainer.vue      # 全局通知容器
+│       │   └── Toast.js                # 通知工具函数
 │       └── styles/
-│           └── main.css           # 单色主题（MiroFish 风格）
-├── data/                       # 运行时生成（SQLite + 上传文件）
-└── .env                        # 环境变量（需手动创建）
+│           └── main.css                # 单色主题（MiroFish 风格）
+├── data/                            # 运行时生成（SQLite + 上传文件）
+└── .env                             # 环境变量（需手动创建）
 ```
 
 ## 快速开始
@@ -114,11 +114,7 @@ npm install
 
 ### 3. 配置环境变量
 
-```bash
-cp .env.example .env
-```
-
-编辑 `.env`，填入你的 LLM API Key 和模型端点：
+复制 `.env` 并填入你的 LLM API Key 和模型端点：
 
 ```ini
 # LLM 配置（火山引擎 Ark API 或其他兼容 OpenAI 的服务）
@@ -128,9 +124,6 @@ LLM_MODEL=your-model-endpoint-id
 
 # Embedding 模型（用于知识图谱）
 EMBEDDING_MODEL=your-embedding-endpoint-id
-
-# Zep 长期记忆（可选，不配也能跑）
-ZEP_API_KEY=your-zep-api-key-here
 
 # Flask
 FLASK_PORT=5001
@@ -168,11 +161,10 @@ python test_smoke.py
 ```
 
 1. **新建推演** — 在首页点击"新建推演"创建空场景
-2. **场景设置** — 咰写世界背景、推演问题，配置时间参数/初始指标/结局条件/大事件触发规则
+2. **场景设置** — 填写世界背景、推演问题，配置时间参数/初始指标/结局条件/大事件触发规则
 3. **生成实体** — LLM 根据背景自动生成多阵营实体（含角色卡、压力值、影响力）
 4. **启动推演** — 每个 tick 实体自主决策，实时观察局势演变
 5. **查看报告** — 推演结束后生成完整分析报告
-```
 
 ## 推演机制详解
 
@@ -190,7 +182,7 @@ python test_smoke.py
 5. 裁判评估 — LLM 评估所有行动的合理性，更新局势和指标
 6. 更新宏观指标 + 实体状态（压力、影响力、资源）
 7. 周期性总结 — 每 N 个 tick 生成阶段总结
-8. 结局检查 — 检查是否满足 Good/Bad/Bittersweet/Neutral 结局条件
+8. 结局检查 — 检查是否满足结局条件
 ```
 
 ### 实体决策
@@ -204,7 +196,7 @@ python test_smoke.py
 | 思考 (thought) | 内心独白，决策前的考量 |
 | 行动 (action) | 具体做了什么 |
 | 目标 (target) | 行动的目标对象 |
-| 行动类型 | `proactive`（主动发起）/ `reactive`（被动反应）/ `wait`（按兵不动） |
+| 行动类型 | `proactive` / `reactive` / `wait` |
 
 ### 指标体系
 
@@ -233,7 +225,7 @@ python test_smoke.py
 两层触发机制：
 
 1. **规则触发** — 用户在 Setup 页面配置的自然语言条件（如"失业率超过15%"），系统每个 tick 检查
-2. **LLM 自主判断** — 每 3 个 tick，LLM 根据当前局势自主判断是否应触发重大事件（如大规模抗议、政策突变、技术突破等）
+2. **LLM 自主判断** — 每 3 个 tick，LLM 根据当前局势自主判断是否应触发重大事件
 
 极端事件机制：低影响力（<45）+ 高压力（>=75）的实体有概率触发极端事件，概率 = (pressure - 70) / 50。触发后该实体影响力提升 15-30 点。
 
@@ -266,28 +258,25 @@ python test_smoke.py
 
 ## WebSocket 事件
 
-| 事件 | 方向 | 数据 |
+| 事件 | 方向 | 说明 |
 |------|------|------|
-| `join_scenario` | Client → Server | `{scenario_id}` 加入推演房间 |
+| `join_scenario` | Client → Server | 加入推演房间 |
 | `sim:progress` | Server → Client | 推演进度（status 变化） |
-| `sim:round` | Server → Client | 每个 tick 的完整数据（局势/决策/结果） |
+| `sim:round` | Server → Client | 每个 tick 的完整数据 |
 | `sim:metrics` | Server → Client | 四大指标更新 |
 | `sim:phase` | Server → Client | 阶段标记（先行/反应） |
 | `sim:summary` | Server → Client | 周期性总结 |
 | `sim:entity_spawned` | Server → Client | 新实体涌现通知 |
 | `sim:ending` | Server → Client | 结局通知 |
-| `sim:error` | Server → Client | 锨误通知 |
+| `sim:error` | Server → Client | 错误通知 |
 
 ## 致谢
 
 - [SillyTavern](https://github.com/SillyTavern/SillyTavern) — 角色卡系统（persona / appearance / speech_style）启发
 - [MiroFish](https://github.com/mycyg/MiroFish) — 多智能体博弈推演思路启发
-
 - [Claude](https://www.anthropic.com/claude) / [火山引擎 Ark](https://www.volcengine.com/product/ark) — LLM 能力提供
-
 - [Kuzu](https://kuzudb.com/) — 嵌入式图数据库
-- [Zep](https://www.getzep.com/) — 长期记忆管理
 
- ## License
+## License
 
 MIT
